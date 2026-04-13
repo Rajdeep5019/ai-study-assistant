@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Study Assistant</title>
+</head>
+<body>
+    <h1>AI Study Assistant</h1>
+    <form method="POST">
+        <input type="text" name="topic" placeholder="Enter a topic..." required>
+        <button type="submit" name="action" value="explain">Explain</button>
+        <button type="submit" name="action" value="quiz">Generate Quiz</button>
+    </form>
+
+    {% if explanation %}
+        <h2>Explanation</h2>
+        <p>{{ explanation | safe }}</p>
+    {% endif %}
+
+    {% if quiz %}
+        <h2>Quiz</h2>
+        <p>{{ quiz | safe }}</p>
+    {% endif %}
+</body>
+</html>
