@@ -1,23 +1,18 @@
-from unittest import result
-
 import re
-
-def convert_markdown(text):
-    # Bold
-    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
-    # Headers
-    text = re.sub(r'^### (.*?)$', r'<h3>\1</h3>', text, flags=re.MULTILINE)
-    text = re.sub(r'^## (.*?)$', r'<h2>\1</h2>', text, flags=re.MULTILINE)
-    text = re.sub(r'^# (.*?)$', r'<h1>\1</h1>', text, flags=re.MULTILINE)
-    # Line breaks
-    text = text.replace('\n\n', '</p><p>').replace('\n', '<br>')
-    return f'<p>{text}</p>'
 from flask import Flask, render_template, request
 from groq import Groq
 import os
 
 app = Flask(__name__)
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
+def convert_markdown(text):
+    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
+    text = re.sub(r'^### (.*?)$', r'<h3>\1</h3>', text, flags=re.MULTILINE)
+    text = re.sub(r'^## (.*?)$', r'<h2>\1</h2>', text, flags=re.MULTILINE)
+    text = re.sub(r'^# (.*?)$', r'<h1>\1</h1>', text, flags=re.MULTILINE)
+    text = text.replace('\n\n', '</p><p>').replace('\n', '<br>')
+    return f'<p>{text}</p>'
 
 def explain_topic(topic):
     response = client.chat.completions.create(
@@ -38,9 +33,9 @@ def generate_quiz(topic):
             {"role": "user", "content": f"Generate a quiz on this topic: {topic}"}
         ]
     )
-    response.choices[0].message.content
+    result = response.choices[0].message.content
     return convert_markdown(result)
- 
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     explanation = None
