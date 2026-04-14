@@ -2,23 +2,115 @@
 <html>
 <head>
     <title>AI Study Assistant</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #333;
+        }
+
+        header {
+            background: #2563eb;
+            color: white;
+            padding: 20px 40px;
+        }
+
+        header h1 { font-size: 28px; }
+        header p { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .search-box {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-box input:focus { border-color: #2563eb; }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-secondary { background: #7c3aed; color: white; }
+        .btn:hover { opacity: 0.9; }
+
+        .result {
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-top: 24px;
+        }
+
+        .result h2 {
+            font-size: 18px;
+            color: #2563eb;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .result p { line-height: 1.7; }
+        .result ul, .result ol { padding-left: 20px; line-height: 1.9; }
+        .result strong { color: #1e40af; }
+    </style>
 </head>
 <body>
-    <h1>AI Study Assistant</h1>
-    <form method="POST">
-        <input type="text" name="topic" placeholder="Enter a topic..." required>
-        <button type="submit" name="action" value="explain">Explain</button>
-        <button type="submit" name="action" value="quiz">Generate Quiz</button>
-    </form>
 
-    {% if explanation %}
-        <h2>Explanation</h2>
-        <p>{{ explanation | safe }}</p>
-    {% endif %}
+    <header>
+        <h1>AI Study Assistant</h1>
+        <p>Enter any topic to get an explanation or quiz</p>
+    </header>
 
-    {% if quiz %}
-        <h2>Quiz</h2>
-        <p>{{ quiz | safe }}</p>
-    {% endif %}
+    <div class="container">
+        <div class="search-box">
+            <form method="POST" style="display:flex; gap:10px; width:100%;">
+                <input type="text" name="topic" placeholder="Enter a topic..." required
+                    value="{{ topic if topic else '' }}">
+                <button class="btn btn-primary" type="submit" name="action" value="explain">Explain</button>
+                <button class="btn btn-secondary" type="submit" name="action" value="quiz">Generate Quiz</button>
+            </form>
+        </div>
+
+        {% if explanation %}
+        <div class="result">
+            <h2>Explanation</h2>
+            {{ explanation | safe }}
+        </div>
+        {% endif %}
+
+        {% if quiz %}
+        <div class="result">
+            <h2>Quiz</h2>
+            {{ quiz | safe }}
+        </div>
+        {% endif %}
+    </div>
+
 </body>
 </html>
