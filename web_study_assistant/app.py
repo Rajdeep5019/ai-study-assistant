@@ -39,7 +39,7 @@ def generate_quiz(topic):
         ]
     )
     response.choices[0].message.content
-    return markdown.markdown(result)
+    return convert_markdown(result)
  
 @app.route("/", methods=["GET", "POST"])
 def index():
