@@ -1,6 +1,17 @@
 from unittest import result
 
-import markdown
+import re
+
+def convert_markdown(text):
+    # Bold
+    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
+    # Headers
+    text = re.sub(r'^### (.*?)$', r'<h3>\1</h3>', text, flags=re.MULTILINE)
+    text = re.sub(r'^## (.*?)$', r'<h2>\1</h2>', text, flags=re.MULTILINE)
+    text = re.sub(r'^# (.*?)$', r'<h1>\1</h1>', text, flags=re.MULTILINE)
+    # Line breaks
+    text = text.replace('\n\n', '</p><p>').replace('\n', '<br>')
+    return f'<p>{text}</p>'
 from flask import Flask, render_template, request
 from groq import Groq
 import os
@@ -17,7 +28,7 @@ def explain_topic(topic):
         ]
     )
     result = response.choices[0].message.content
-    return markdown.markdown(result)
+    return convert_markdown(result)
 
 def generate_quiz(topic):
     response = client.chat.completions.create(
