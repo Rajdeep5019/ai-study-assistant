@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz History</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
+        header { background: #2563eb; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { font-size: 24px; }
+        header a { color: white; text-decoration: none; font-size: 14px; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 8px; }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .result { background: white; padding: 28px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .result h2 { font-size: 18px; color: #2563eb; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #e5e7eb; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; background: #f8fafc; color: #555; font-size: 13px; border-bottom: 2px solid #e5e7eb; }
+        td { padding: 12px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+        tr:last-child td { border-bottom: none; }
+        .score { font-weight: 600; color: #2563eb; }
+        .empty { text-align: center; color: #999; padding: 40px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Quiz History</h1>
+        <a href="/">← Back to Assistant</a>
+    </header>
+    <div class="container">
+        <div class="result">
+            <h2>Your Past Quizzes</h2>
+            {% if records %}
+            <table>
+                <tr>
+                    <th>Topic</th>
+                    <th>Score</th>
+                    <th>Date</th>
+                </tr>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record[0] }}</td>
+                    <td class="score">{{ record[1] }}</td>
+                    <td>{{ record[2] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <div class="empty">No quiz history yet. Take a quiz to see it here.</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

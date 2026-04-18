@@ -1,11 +1,41 @@
 import re
 import json
+import sqlite3
+from datetime import datetime
 from flask import Flask, render_template, request
 from groq import Groq
 import os
 
 app = Flask(__name__)
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
+# Database setup
+def init_db():
+    conn = sqlite3.connect('history.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS quiz_history
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  topic TEXT,
+                  score TEXT,
+                  date TEXT)''')
+    conn.commit()
+    conn.close()
+
+def save_quiz(topic, score):
+    conn = sqlite3.connect('history.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO quiz_history (topic, score, date) VALUES (?, ?, ?)",
+              (topic, score, datetime.now().strftime("%d %b %Y, %I:%M %p")))
+    conn.commit()
+    conn.close()
+
+def get_history():
+    conn = sqlite3.connect('history.db')
+    c = conn.cursor()
+    c.execute("SELECT topic, score, date FROM quiz_history ORDER BY id DESC")
+    rows = c.fetchall()
+    conn.close()
+    return rows
 
 def convert_markdown(text):
     text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
@@ -84,6 +114,7 @@ def index():
                     "is_correct": is_correct
                 })
             score = f"{correct}/{len(quiz_data)}"
+            save_quiz(topic, score)
 
     return render_template("index.html",
                          explanation=explanation,
@@ -92,5 +123,11 @@ def index():
                          score=score,
                          results=results)
 
+@app.route("/history")
+def history():
+    records = get_history()
+    return render_template("history.html", records=records)
+
 if __name__ == "__main__":
+    init_db()
     app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
